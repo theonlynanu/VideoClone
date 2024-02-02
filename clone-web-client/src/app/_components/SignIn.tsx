@@ -11,14 +11,14 @@ export default function SignIn({ user }: SignInProps) {
     <>
       {user ? (
         <button
-          className="border-2 border-gray-500 rounded-full px-2 py-1 text-lg font-semibold hover:bg-gray-200 h-12 self-center"
+          className="border-2 border-gray-800 rounded-full px-2 py-1 text-lg font-semibold hover:bg-gray-200 h-12 self-center"
           onClick={signOutWithGoogle}
         >
           Sign Out
         </button>
       ) : (
         <button
-          className="border-2 border-gray-500 rounded-full px-2 py-1 text-lg font-semibold hover:bg-gray-200 h-12 self-center"
+          className="border-2 border-gray-800 rounded-full px-2 py-1 text-lg font-semibold hover:bg-gray-200 h-12 self-center"
           onClick={signInWithGoogle}
         >
           Sign In
