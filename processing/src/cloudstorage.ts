@@ -16,6 +16,25 @@ export function setupDirectories() {
   verifyDirectory(localProcessedVideoDir);
 }
 
+export function convertVideo(
+  rawVideoName: string,
+  processedVideoName: string
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    ffmpeg(`${localRawVideoDir}/${rawVideoName}`)
+      .outputOptions("-filter:v", "scale=360:-1")
+      .on("end", () => {
+        console.log("Video processing successful.");
+        resolve();
+      })
+      .on("error", (error) => {
+        console.log(`An exception occurred: ${error.message} `);
+        reject(error);
+      })
+      .save(`${localProcessedVideoDir}/${processedVideoName}`);
+  });
+}
+
 export async function downloadRawVideo(filename: string) {
   await storage
     .bucket(rawVideoBucket)
@@ -42,6 +61,16 @@ export async function uploadProcessedVideo(filename: string) {
 }
 
 // Cleanup files from the container after processing and uploading
+export function deleteRawVideo(filename: string): Promise<void> {
+  console.log("Deleting raw video...");
+  return deleteFile(`${localRawVideoDir}/${filename}`);
+}
+
+export function deleteProcessedVideo(filename: string): Promise<void> {
+  console.log("Deleting processed video...");
+  return deleteFile(`${localProcessedVideoDir}/${filename}`);
+}
+
 function deleteFile(filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     if (fs.existsSync(filepath)) {
@@ -49,41 +78,15 @@ function deleteFile(filepath: string): Promise<void> {
         if (error) {
           console.log(`Failed to delete file at ${filepath}`, error);
           reject(error);
+        } else {
+          console.log(`File deleted at ${filepath}`);
+          resolve();
         }
       });
     } else {
       console.log(`File at ${filepath} could not be found.`);
       resolve();
     }
-  });
-}
-
-export function deleteRawVideo(filename: string) {
-  return deleteFile(`${localRawVideoDir}/${filename}`);
-}
-export function deleteProcessedVideo(filename: string) {
-  return deleteFile(`${localProcessedVideoDir}/${filename}`);
-}
-
-/**
- * @param rawVideoName - The name of the file to convert from {@link localRawVideoDir}
- * @param processedVideoName - The name of processed output file, writes to {@link localProcessedVideoDir}
- * @returns a Promise that resolves once the video has been converted
- */
-
-export function convertVideo(rawVideoName: string, processedVideoName: string) {
-  return new Promise<void>((resolve, reject) => {
-    ffmpeg(`${localRawVideoDir}/${rawVideoName}`)
-      .outputOptions("-filter:v", "scale=360:-1")
-      .on("end", () => {
-        console.log("Video processing successful.");
-        resolve();
-      })
-      .on("error", (error) => {
-        console.log(`An exception occurred: ${error.message} `);
-        reject(error);
-      })
-      .save(`${localProcessedVideoDir}/${processedVideoName}`);
   });
 }
 
