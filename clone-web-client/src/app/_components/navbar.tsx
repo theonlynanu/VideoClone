@@ -28,7 +28,14 @@ export default function Navbar() {
         />
         <h1 className="text-xl font-bold">YouTube (clone)</h1>
       </Link>
-      {user && <Upload />}
+      {user && (
+        <Link
+          href="/upload"
+          className="rounded-full border-2 border-gray-800 h-12 self-center w-fit px-2 font-semibold flex items-center hover:bg-gray-200"
+        >
+          <p className="">Upload</p>
+        </Link>
+      )}
       <SignIn user={user} />
     </div>
   );
