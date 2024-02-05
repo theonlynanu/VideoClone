@@ -16,6 +16,7 @@ const videoCollectionId = "videos";
 export const createUser = functions.auth.user().onCreate((user) => {
   const userInfo = {
     uid: user.uid,
+    displayName: user.displayName,
     email: user.email,
     photoUrl: user.photoURL,
   };
@@ -45,7 +46,7 @@ export const generateUploadUrl = onCall(
     const [url] = await bucket.file(fileName).getSignedUrl({
       version: "v4",
       action: "write",
-      expires: Date.now() + 15 * 60 * 1000,
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
     });
 
     return { url, fileName };
